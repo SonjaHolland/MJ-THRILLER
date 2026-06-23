@@ -192,4 +192,70 @@ let isPlaying = false;
 const playlist = [
     "8KWf_-ofYgI",
     "COSMzAASQj4",
-    "
+    "SX5vM6F57_E",
+    "Z85lxckrtzg",
+    "kOn-HdEg6AQ",
+    "Kr4EQDVETuA",
+    "y32ejtuxSjM"
+];
+
+let currentIndex = 0;
+
+/* YouTube API maakt speler */
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+        height: '100%',
+        width: '100%',
+        videoId: playlist[currentIndex],
+        playerVars: {
+            controls: 0,
+            rel: 0,
+            modestbranding: 1
+        },
+        events: {
+            'onStateChange': onPlayerStateChange
+        }
+    });
+}
+
+/* Automatisch volgende nummer */
+function onPlayerStateChange(event) {
+    if (event.data === 0) {
+        currentIndex = (currentIndex + 1) % playlist.length;
+        player.loadVideoById(playlist[currentIndex]);
+        if (isPlaying) player.playVideo();
+    }
+}
+
+/* PLAY / PAUSE */
+document.getElementById("playBtn").onclick = function() {
+
+    if (!isPlaying) {
+        player.playVideo();
+        document.getElementById("album").style.display = "none";
+        this.innerText = "PAUSE";
+        isPlaying = true;
+    } else {
+        player.pauseVideo();
+        this.innerText = "PLAY";
+        isPlaying = false;
+    }
+};
+
+/* NEXT SONG */
+document.getElementById("nextBtn").onclick = function() {
+    currentIndex = (currentIndex + 1) % playlist.length;
+    player.loadVideoById(playlist[currentIndex]);
+    if (isPlaying) player.playVideo();
+};
+
+/* PREVIOUS SONG */
+document.getElementById("prevBtn").onclick = function() {
+    currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+    player.loadVideoById(playlist[currentIndex]);
+    if (isPlaying) player.playVideo();
+};
+</script>
+
+</body>
+</html>
