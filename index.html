@@ -16,7 +16,7 @@ html, body {
     background: #050505;
 }
 
-/* TV Frame */
+/* TV Frame – zilveren lijst blijft, zwarte rand weg */
 #tv {
     position: absolute;
     top: 50%;
@@ -24,33 +24,35 @@ html, body {
     transform: translate(-50%, -50%);
     width: 98vw;
     height: 98vh;
-    padding: 30px;
-    box-sizing: border-box;
-    border-radius: 6px;
-    background: linear-gradient(
-        135deg,
-        #111 0%,
-        #666 10%,
-        #bbb 20%,
-        #444 35%,
-        #222 50%,
-        #777 70%,
-        #111 100%
-    );
-    box-shadow:
-        0 0 30px rgba(0,0,0,.9),
-        0 0 80px rgba(0,0,0,.6),
-        inset 0 0 10px rgba(255,255,255,.25);
+
+    padding: 0;          /* zwarte rand weg */
+    background: none;    /* geen zwarte achtergrond */
+    box-shadow: none;    /* geen zwarte schaduw */
+
+    border-radius: 6px;  /* zilveren lijst blijft */
 }
 
-/* Scherm */
+/* Scherm – zilveren lijst */
 #screen {
     position: relative;
     width: 100%;
     height: 100%;
     overflow: hidden;
+
     border-radius: 10px;
-    background: black;
+
+    /* jouw zilveren lijst */
+    background:
+        linear-gradient(
+            135deg,
+            #111 0%,
+            #666 10%,
+            #bbb 20%,
+            #444 35%,
+            #222 50%,
+            #777 70%,
+            #111 100%
+        );
 }
 
 /* LED onderaan */
@@ -82,8 +84,8 @@ html, body {
 }
 
 #album {
-    width: 55%;              /* GROTER GEMAAKT */
-    max-width: 650px;        /* GROTERE MAXIMALE GROOTTE */
+    width: 60%;
+    max-width: 700px;
     border-radius: 10px;
     box-shadow: 0 0 25px rgba(0,0,0,.8);
 }
@@ -91,7 +93,7 @@ html, body {
 /* Knoppen onderaan */
 #bottomControls {
     position: absolute;
-    bottom: 70px; /* boven de LED strip */
+    bottom: 70px;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -101,21 +103,20 @@ html, body {
 
 button {
     margin-top: 12px;
-    padding: 10px 28px;      /* KLEINER GEMAAKT */
-    font-size: 22px;         /* KLEINER GEMAAKT */
+    padding: 10px 28px;
+    font-size: 22px;
     font-weight: bold;
     color: white;
 
-    background: linear-gradient(#ff3b3b, #b30000); /* 3D kleurverloop */
+    background: linear-gradient(#ff3b3b, #b30000);
     border: none;
     border-radius: 8px;
 
     cursor: pointer;
 
-    /* 3D effect */
     box-shadow:
-        0 4px 0 #660000,          /* onderrand */
-        0 8px 15px rgba(0,0,0,.5); /* diepe schaduw */
+        0 4px 0 #660000,
+        0 8px 15px rgba(0,0,0,.5);
 
     transition: 0.15s ease-in-out;
 }
@@ -139,6 +140,7 @@ button:active {
     gap: 15px;
 }
 
+/* VIDEO ZONDER ZWARTE BALKEN */
 iframe {
     width: 100%;
     height: 100%;
@@ -147,6 +149,8 @@ iframe {
     top: 0;
     left: 0;
     z-index: 1;
+
+    object-fit: cover; /* vult scherm → geen zwarte zijkanten */
 }
 
 </style>
@@ -216,7 +220,7 @@ function onYouTubeIframeAPIReady() {
 
 /* Automatisch volgende nummer */
 function onPlayerStateChange(event) {
-    if (event.data === 0) { // 0 = video is klaar
+    if (event.data === 0) {
         currentIndex = (currentIndex + 1) % playlist.length;
         player.loadVideoById(playlist[currentIndex]);
         if (isPlaying) player.playVideo();
