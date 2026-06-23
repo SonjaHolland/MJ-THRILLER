@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Michael Jackson TV</title>
+
+<style>
+
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #050505;
+}
+
+/* TV Frame */
+#tv {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 98vw;
+    height: 98vh;
+    padding: 30px;
+    box-sizing: border-box;
+    border-radius: 6px;
+    background: linear-gradient(
+        135deg,
+        #111 0%,
+        #666 10%,
+        #bbb 20%,
+        #444 35%,
+        #222 50%,
+        #777 70%,
+        #111 100%
+    );
+    box-shadow:
+        0 0 30px rgba(0,0,0,.9),
+        0 0 80px rgba(0,0,0,.6),
+        inset 0 0 10px rgba(255,255,255,.25);
+}
+
+/* Scherm */
+#screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+    background: black;
+}
+
+/* LED onderaan */
+#screen:after {
+    content: "";
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    border-radius: 4px;
+    background: #00c8ff;
+    box-shadow:
+        0 0 10px #00c8ff,
+        0 0 20px #00c8ff,
+        0 0 30px #00c8ff;
+    z-index: 3;
+}
+
+/* Album bovenaan */
+#content {
+    position: absolute;
+    top: 4%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 5;
+}
+
+#album {
+    width: 55%;              /* GROTER GEMAAKT */
+    max-width: 650px;        /* GROTERE MAXIMALE GROOTTE */
+    border-radius: 10px;
+    box-shadow: 0 0 25px rgba(0,0,0,.8);
+}
+
+/* Knoppen onderaan */
+#bottomControls {
+    position: absolute;
+    bottom: 70px; /* boven de LED strip */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 6;
+}
+
+button {
+    margin-top: 12px;
+    padding: 10px 28px;      /* KLEINER GEMAAKT */
+    font-size: 22px;         /* KLEINER GEMAAKT */
+    font-weight: bold;
+    color: white;
+
+    background: linear-gradient(#ff3b3b, #b30000); /* 3D kleurverloop */
+    border: none;
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    /* 3D effect */
+    box-shadow:
+        0 4px 0 #660000,          /* onderrand */
+        0 8px 15px rgba(0,0,0,.5); /* diepe schaduw */
+
+    transition: 0.15s ease-in-out;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 6px 0 #660000,
+        0 12px 20px rgba(0,0,0,.6);
+}
+
+button:active {
+    transform: translateY(2px);
+    box-shadow:
+        0 2px 0 #660000,
+        0 4px 10px rgba(0,0,0,.4);
+}
+
+#controls {
+    display: flex;
+    gap: 15px;
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="tv">
+    <div id="screen">
+
+        <!-- Album -->
+        <div id="content">
+            <img id="album" src="Triller01.jpg">
+        </div>
+
+        <!-- Knoppen onderaan -->
+        <div id="bottomControls">
+            <button id="playBtn">PLAY</button>
+
+            <div id="controls">
+                <button id="prevBtn">PREVIOUS</button>
+                <button id="nextBtn">NEXT</button>
+            </div>
+        </div>
+
+        <!-- YouTube player -->
+        <div id="player"></div>
+
+    </div>
+</div>
+
+<!-- YouTube API -->
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<script>
+let player;
+let isPlaying = false;
+
+const playlist = [
+    "8KWf_-ofYgI",
+    "COSMzAASQj4",
+    "SX5vM6F57_E",
+    "Z85lxckrtzg",
+    "kOn-HdEg6AQ",
+    "Kr4EQDVETuA",
+    "y32ejtuxSjM"
+];
+
+let currentIndex = 0;
+
+/* YouTube API maakt speler */
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+        height: '100%',
+        width: '100%',
+        videoId: playlist[currentIndex],
+        playerVars: {
+            controls: 0,
+            rel: 0,
+            modestbranding: 1
+        }
+    });
+}
+
+/* PLAY / PAUSE */
+document.getElementById("playBtn").onclick = function() {
+
+    if (!isPlaying) {
+        player.playVideo();
+        document.getElementById("album").style.display = "none";
+        this.innerText = "PAUSE";
+        isPlaying = true;
+    } else {
+        player.pauseVideo();
+        this.innerText = "PLAY";
+        isPlaying = false;
+    }
+};
+
+/* NEXT SONG */
+document.getElementById("nextBtn").onclick = function() {
+    currentIndex = (currentIndex + 1) % playlist.length;
+    player.loadVideoById(playlist[currentIndex]);
+    if (isPlaying) player.playVideo();
+};
+
+/* PREVIOUS SONG */
+document.getElementById("prevBtn").onclick = function() {
+    currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+    player.loadVideoById(playlist[currentIndex]);
+    if (isPlaying) player.playVideo();
+};
+</script>
+
+</body>
+</html>
