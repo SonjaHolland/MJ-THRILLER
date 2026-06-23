@@ -207,8 +207,20 @@ function onYouTubeIframeAPIReady() {
             controls: 0,
             rel: 0,
             modestbranding: 1
+        },
+        events: {
+            'onStateChange': onPlayerStateChange
         }
     });
+}
+
+/* Automatisch volgende nummer */
+function onPlayerStateChange(event) {
+    if (event.data === 0) { // 0 = video is klaar
+        currentIndex = (currentIndex + 1) % playlist.length;
+        player.loadVideoById(playlist[currentIndex]);
+        if (isPlaying) player.playVideo();
+    }
 }
 
 /* PLAY / PAUSE */
